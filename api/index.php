@@ -8,6 +8,7 @@ require_once "stats.php";
 require_once "card.php";
 require_once "cache.php";
 require_once "generator.php";
+require_once "whitelist.php";
 
 // load .env
 $dotenv = \Dotenv\Dotenv::createImmutable(dirname(__DIR__, 1));
@@ -30,6 +31,12 @@ header("Cache-Control: public, max-age=$cacheSeconds");
 // redirect to demo site if user is not given
 if (!isset($_REQUEST["user"])) {
     header("Location: demo/");
+    exit();
+}
+
+// check if user is whitelisted
+if (!isWhitelisted($_REQUEST["user"])) {
+    renderOutput("User not allowed on this instance.", 403);
     exit();
 }
 
